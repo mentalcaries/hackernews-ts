@@ -1,5 +1,4 @@
 import { extendType, nonNull, objectType, stringArg } from 'nexus';
-import { ListFormat } from 'typescript';
 import { NexusGenObjects } from '../../nexus-typegen';
 
 export const Link = objectType({
