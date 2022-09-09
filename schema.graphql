@@ -2,16 +2,39 @@
 ### Do not make changes to this file directly
 
 
+type AuthPayload {
+  token: String!
+  user: User!
+}
+
 type Link {
   description: String!
   id: Int!
+  postedBy: User
   url: String!
+  voter: [User!]!
 }
 
 type Mutation {
+  login(email: String!, password: String!): AuthPayload!
   post(description: String!, url: String!): Link!
+  signup(email: String!, name: String!, password: String!): AuthPayload!
+  vote(linkId: Int!): Vote
 }
 
 type Query {
   feed: [Link!]!
+}
+
+type User {
+  email: String!
+  id: Int!
+  links: [Link!]!
+  name: String!
+  votes: [Link!]!
+}
+
+type Vote {
+  link: Link!
+  user: User!
 }
