@@ -1,4 +1,4 @@
-import { arg, extendType, nonNull, objectType, stringArg } from 'nexus';
+import { arg, extendType, intArg, nonNull, objectType, stringArg } from 'nexus';
 import { context } from '../context';
 
 export const Link = objectType({
@@ -7,6 +7,7 @@ export const Link = objectType({
     t.nonNull.int('id');
     t.nonNull.string('description');
     t.nonNull.string('url');
+    t.nonNull.dateTime("createdAt")
     t.field('postedBy', {
       type: 'User',
       resolve(parent, args, context) {
@@ -31,8 +32,22 @@ export const LinkQuery = extendType({
   definition(t) {
     t.nonNull.list.nonNull.field('feed', {
       type: 'Link',
-      resolve(parent, args, context, info) {
-        return context.prisma.link.findMany();
+      args: {
+        filter: stringArg(),
+        skip: intArg(),
+        take: intArg()
+      },
+      resolve(parent, args, context) {
+        const where = args.filter ? {
+          OR: [
+            {description: { contains: args.filter } },
+            { url: { contains: args.filter } }
+          ]
+        }
+        : {};
+        return context.prisma.link.findMany({
+          where,
+        });
       },
     });
   },
